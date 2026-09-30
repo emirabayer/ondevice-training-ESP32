@@ -1,0 +1,15 @@
+add_executable(test_arena test_arena.cpp)
+target_link_libraries(test_arena PRIVATE edge_core)
+add_test(NAME test_arena COMMAND test_arena)
+
+add_executable(test_tensor_matmul test_tensor_matmul.cpp)
+target_link_libraries(test_tensor_matmul PRIVATE edge_core)
+add_test(NAME test_tensor_matmul COMMAND test_tensor_matmul)
+
+add_executable(test_gradient_check test_gradient_check.cpp)
+target_link_libraries(test_gradient_check PRIVATE edge_core)
+add_test(NAME test_gradient_check COMMAND test_gradient_check)
+
+add_executable(test_optimizer_qas test_optimizer_qas.cpp)
+target_link_libraries(test_optimizer_qas PRIVATE edge_core)
+add_test(NAME test_optimizer_qas COMMAND test_optimizer_qas)
