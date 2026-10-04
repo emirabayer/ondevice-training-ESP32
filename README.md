@@ -16,11 +16,19 @@ ways on the device:
 
 | | FP32, whole network | INT8 + sparse (head only) |
 |---|---|---|
-| Test accuracy | 95.0% | 90.0% |
+| Test accuracy | 95.0% (19/20) | 90.0% (18/20) |
 | Time per epoch | 45.1 ms | 8.1 ms |
 | Total, 800 epochs | 36.1 s | 6.5 s |
 | Trainable state (params + grads + Adam) | 35.1 KB, 2245 params | 2.8 KB, 165 params |
 | Peak RAM while training | 35.1 KB | 29.3 KB (11.5% of the arena) |
+
+The test set is 20 examples, 4 per class, so those two numbers are 19/20 and
+18/20, one example apart. That gap is noise at this size. Running the same two
+models over 10 random train/test splits on the host, the full FP32 network
+averages 93.5% (range 85 to 100) and the int8 + sparse head averages 93.0%
+(range 85 to 100), so on this dataset their accuracy is the same within the
+spread. The differences that hold up are speed and trainable memory, not
+accuracy. `tools/accuracy_variance.py` reproduces the split study.
 
 The INT8 + sparse run trains about 5.6x faster. Two separate things cause that,
 and it is worth keeping them apart:
@@ -119,8 +127,9 @@ The CH343 USB-UART on this board shows up as `/dev/ttyACM0`.
 
 ## Notes and limitations
 
-* The dataset is 100 examples from one person, so the accuracy numbers are for
-  this data and split, not a general benchmark.
+* The dataset is 100 examples from one person, split 80 train / 20 test (4 per
+  class). A 20-example test set is small, so single-split accuracy is noisy;
+  see the split study in the Results section.
 * The int8 path fine-tunes: the feature extractor is trained on the laptop and
   frozen, and only the head is trained on the board. That is the realistic case
   for adapting a model on a device, not training a whole network from scratch
